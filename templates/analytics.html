@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics | SmartLender AI{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="content">
+
+        <!-- Top Bar -->
+
+        <div class="topbar">
+
+            <h3>Dataset Analytics</h3>
+
+            <div class="user">
+
+                <i class="bi bi-bar-chart-fill"></i>
+
+                Dataset Overview
+
+            </div>
+
+        </div>
+
+        <!-- Statistics -->
+
+        <section class="stats">
+
+            <div class="card">
+
+                <h2>614</h2>
+
+                <p>Total Applications</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>422</h2>
+
+                <p>Approved Loans</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>192</h2>
+
+                <p>Rejected Loans</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>11</h2>
+
+                <p>Input Features</p>
+
+            </div>
+
+        </section>
+
+        <br>
+
+        <!-- Dataset Summary -->
+
+        <div class="card p-4">
+
+            <h3 class="mb-4">
+
+                Dataset Summary
+
+            </h3>
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-primary">
+
+                    <tr>
+
+                        <th>Feature</th>
+
+                        <th>Description</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Gender</td>
+
+                        <td>Applicant gender information.</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Marital Status</td>
+
+                        <td>Married or unmarried applicant.</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Applicant Income</td>
+
+                        <td>Monthly income earned by the applicant.</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Co-applicant Income</td>
+
+                        <td>Monthly income earned by the co-applicant.</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Loan Amount</td>
+
+                        <td>Requested loan amount.</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Loan Amount Term</td>
+
+                        <td>Repayment period of the loan.</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Credit History</td>
+
+                        <td>Represents previous repayment history.</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Property Area</td>
+
+                        <td>Rural, Semiurban or Urban.</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <br>
+
+        <!-- AI Insights -->
+
+        <div class="card p-4">
+
+            <h3 class="mb-3">
+
+                AI Insights
+
+            </h3>
+
+            <ul>
+
+                <li>✔ Credit History has the highest impact on loan approval.</li>
+
+                <li>✔ Higher applicant income generally increases approval probability.</li>
+
+                <li>✔ Loan amount and repayment term influence prediction confidence.</li>
+
+                <li>✔ The model evaluates 11 processed input features.</li>
+
+            </ul>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

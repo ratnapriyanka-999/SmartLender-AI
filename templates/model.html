@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}AI Model | SmartLender AI{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="content">
+
+        <!-- Top Navigation -->
+
+        <div class="topbar">
+
+            <h3>Machine Learning Model</h3>
+
+            <div class="user">
+
+                <i class="bi bi-cpu-fill"></i>
+
+                AI Engine
+
+            </div>
+
+        </div>
+
+        <!-- Hero Section -->
+
+        <section class="welcome">
+
+            <div>
+
+                <h1>Artificial Intelligence Prediction Engine</h1>
+
+                <p>
+
+                    SmartLender AI evaluates applicant financial,
+                    demographic and credit information using supervised
+                    Machine Learning algorithms to predict loan eligibility
+                    quickly, consistently and accurately.
+
+                </p>
+
+            </div>
+
+            <img src="{{ url_for('static', filename='images/hero.svg') }}" alt="AI Model">
+
+        </section>
+
+        <!-- Statistics -->
+
+        <section class="stats">
+
+            <div class="card">
+
+                <h2>77.24%</h2>
+
+                <p>Best Accuracy</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>4</h2>
+
+                <p>Algorithms Trained</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>614</h2>
+
+                <p>Training Records</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>Random Forest</h2>
+
+                <p>Selected Model</p>
+
+            </div>
+
+        </section>
+
+        <br>
+
+        <!-- Algorithm Comparison -->
+
+        <div class="card p-4">
+
+            <h3 class="mb-4">
+
+                Machine Learning Algorithms
+
+            </h3>
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-primary">
+
+                    <tr>
+
+                        <th>Algorithm</th>
+
+                        <th>Status</th>
+
+                        <th>Purpose</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Decision Tree</td>
+
+                        <td>✔ Trained</td>
+
+                        <td>Baseline Classification Model</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Random Forest</td>
+
+                        <td>⭐ Selected</td>
+
+                        <td>Final Prediction Model</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>K-Nearest Neighbors</td>
+
+                        <td>✔ Trained</td>
+
+                        <td>Performance Comparison</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>XGBoost</td>
+
+                        <td>✔ Trained</td>
+
+                        <td>Gradient Boosting Evaluation</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <br>
+
+        <!-- Model Workflow -->
+
+        <div class="card p-4">
+
+            <h3 class="mb-3">
+
+                Prediction Workflow
+
+            </h3>
+
+            <ol>
+
+                <li>Applicant enters loan application details.</li>
+
+                <li>Input data is preprocessed and scaled.</li>
+
+                <li>Random Forest model evaluates eligibility.</li>
+
+                <li>Prediction result is generated instantly.</li>
+
+                <li>User receives Loan Approved or Loan Rejected decision.</li>
+
+            </ol>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

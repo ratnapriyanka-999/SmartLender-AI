@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Login | SmartLender AI{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="login-page">
+
+    <!-- Left Panel -->
+
+    <div class="left-panel">
+
+        <div class="brand">
+
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" class="logo">
+
+            <h1>SmartLender AI</h1>
+
+            <p>
+
+                Intelligent Loan Eligibility
+                & Risk Assessment Platform
+
+            </p>
+
+        </div>
+
+        <img
+            src="{{ url_for('static', filename='images/hero.svg') }}"
+            class="hero">
+
+        <div class="footer-text">
+
+            <span>AI Powered</span>
+
+            <span>•</span>
+
+            <span>Secure</span>
+
+            <span>•</span>
+
+            <span>Fast Decisions</span>
+
+        </div>
+
+    </div>
+
+    <!-- Right Panel -->
+
+    <div class="right-panel">
+
+        <div class="login-card">
+
+            <h2>Welcome Back 👋</h2>
+
+            <p>
+
+                Sign in to continue to SmartLender AI
+
+            </p>
+
+            <form action="/" method="POST">
+
+                <div class="form-group">
+
+                    <label>Username</label>
+
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter Username"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Password</label>
+
+                    <div class="password-box">
+
+                        <input
+                            id="password"
+                            type="password"
+                            name="password"
+                            placeholder="Enter Password"
+                            required>
+
+                        <span onclick="togglePassword()">
+
+                            👁️
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                {% if error %}
+
+                <div class="error">
+
+                    {{ error }}
+
+                </div>
+
+                {% endif %}
+
+                <button type="submit">
+
+                    Login
+
+                </button>
+
+            </form>
+
+            <hr>
+
+            <p style="text-align:center; margin-top:20px;">
+
+                Don't have an account?
+
+            </p>
+
+            <div style="text-align:center;">
+
+                <a href="/register" class="btn btn-outline-primary">
+
+                    Create Account
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function togglePassword(){
+
+let x=document.getElementById("password");
+
+if(x.type==="password"){
+
+x.type="text";
+
+}else{
+
+x.type="password";
+
+}
+
+}
+
+</script>
+
+{% endblock %}

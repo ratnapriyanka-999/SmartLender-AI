@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result | SmartLender AI{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="content">
+
+        <!-- Top Bar -->
+
+        <div class="topbar">
+
+            <h3>Prediction Result</h3>
+
+            <div class="user">
+
+                <i class="bi bi-cpu-fill"></i>
+
+                AI Decision
+
+            </div>
+
+        </div>
+
+        <!-- Result -->
+
+        <div class="result-container">
+
+            {% if prediction == "approved" %}
+
+            <div class="result-card success">
+
+                <img
+                    src="{{ url_for('static', filename='images/approved.svg') }}"
+                    alt="Approved">
+
+                <h1 class="approved-title">
+
+                    Loan Approved ✅
+
+                </h1>
+
+                <p>
+
+                    Congratulations! SmartLender AI predicts that this
+                    applicant is eligible for loan approval based on
+                    the submitted financial and demographic information.
+
+                </p>
+
+                <div class="status">
+
+                    <strong>Risk Level :</strong>
+
+                    <span class="green">
+
+                        LOW
+
+                    </span>
+
+                </div>
+
+                <div class="summary">
+
+                    <h5>Prediction Summary</h5>
+
+                    <ul>
+
+                        <li>✔ Credit profile meets eligibility criteria.</li>
+
+                        <li>✔ Financial information is acceptable.</li>
+
+                        <li>✔ AI recommends loan approval.</li>
+
+                    </ul>
+
+                </div>
+
+            {% else %}
+
+            <div class="result-card reject">
+
+                <img
+                    src="{{ url_for('static', filename='images/rejected.svg') }}"
+                    alt="Rejected">
+
+                <h1 class="rejected-title">
+
+                    Loan Rejected ❌
+
+                </h1>
+
+                <p>
+
+                    SmartLender AI predicts that the applicant does not
+                    currently satisfy the eligibility criteria for loan
+                    approval.
+
+                </p>
+
+                <div class="status">
+
+                    <strong>Risk Level :</strong>
+
+                    <span class="red">
+
+                        HIGH
+
+                    </span>
+
+                </div>
+
+                <div class="summary">
+
+                    <h5>Prediction Summary</h5>
+
+                    <ul>
+
+                        <li>✖ Credit profile requires improvement.</li>
+
+                        <li>✖ Financial information indicates higher risk.</li>
+
+                        <li>✖ AI recommends loan rejection.</li>
+
+                    </ul>
+
+                </div>
+
+            {% endif %}
+
+                <div class="buttons">
+
+                    <a href="/predict" class="btn btn-primary">
+
+                        <i class="bi bi-arrow-repeat"></i>
+
+                        Predict Again
+
+                    </a>
+
+                    <a href="/dashboard" class="btn btn-outline-primary">
+
+                        <i class="bi bi-house-fill"></i>
+
+                        Dashboard
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}

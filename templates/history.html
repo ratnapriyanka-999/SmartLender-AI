@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+{% include "components/sidebar.html" %}
+
+<main class="content">
+
+<div class="topbar">
+
+<h3>Prediction History</h3>
+
+</div>
+
+<div class="card">
+
+<h3>Recent Predictions</h3>
+
+<br>
+
+<table class="table table-hover">
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>Date</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>1</td>
+
+<td>Today</td>
+
+<td><span class="badge bg-success">Approved</span></td>
+
+</tr>
+
+<tr>
+
+<td>2</td>
+
+<td>Today</td>
+
+<td><span class="badge bg-danger">Rejected</span></td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</main>
+
+</div>
+
+{% endblock %}

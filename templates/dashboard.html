@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | SmartLender AI{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="content">
+
+        <!-- Top Bar -->
+
+        <nav class="topbar">
+
+            <h3>Dashboard</h3>
+
+            <div class="user">
+
+                <i class="bi bi-person-circle"></i>
+
+                {{ username }}
+
+            </div>
+
+        </nav>
+
+        <!-- Welcome -->
+
+        <section class="welcome">
+
+            <div>
+
+                <h1>Welcome, {{ username }} 👋</h1>
+
+                <p>
+
+                    SmartLender AI is ready to analyze loan applications
+                    using Machine Learning algorithms and provide instant,
+                    intelligent loan eligibility predictions.
+
+                </p>
+
+                <a href="/predict" class="btn btn-primary">
+
+                    <i class="bi bi-lightning-charge-fill"></i>
+
+                    Predict Loan
+
+                </a>
+
+            </div>
+
+            <img src="{{ url_for('static', filename='images/hero.svg') }}" alt="Hero">
+
+        </section>
+
+        <!-- Statistics -->
+
+        <section class="stats">
+
+            <div class="card">
+
+                <h2>614</h2>
+
+                <p>Total Applications</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>11</h2>
+
+                <p>Input Features</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>4</h2>
+
+                <p>ML Algorithms</p>
+
+            </div>
+
+            <div class="card">
+
+                <h2>77.24%</h2>
+
+                <p>Best Accuracy</p>
+
+            </div>
+
+        </section>
+
+        <!-- Quick Actions -->
+
+        <section class="actions">
+
+            <h3>Quick Actions</h3>
+
+            <div class="action-grid">
+
+                <a href="/predict" class="action-card">
+
+                    <i class="bi bi-cash-stack"></i>
+
+                    <span>Predict Loan</span>
+
+                </a>
+
+                <a href="/analytics" class="action-card">
+
+                    <i class="bi bi-graph-up-arrow"></i>
+
+                    <span>Analytics</span>
+
+                </a>
+
+                <a href="/model" class="action-card">
+
+                    <i class="bi bi-cpu-fill"></i>
+
+                    <span>AI Model</span>
+
+                </a>
+
+                <a href="/logout" class="action-card">
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    <span>Logout</span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- System Status -->
+
+        <section class="actions">
+
+            <h3>System Status</h3>
+
+            <div class="stats">
+
+                <div class="card">
+
+                    <h2>🟢</h2>
+
+                    <p>Model Loaded</p>
+
+                </div>
+
+                <div class="card">
+
+                    <h2>🟢</h2>
+
+                    <p>Database Connected</p>
+
+                </div>
+
+                <div class="card">
+
+                    <h2>🟢</h2>
+
+                    <p>Prediction Ready</p>
+
+                </div>
+
+                <div class="card">
+
+                    <h2>🟢</h2>
+
+                    <p>System Online</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+{% endblock %}

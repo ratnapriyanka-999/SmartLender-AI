@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Loan Prediction | SmartLender AI{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/predict.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    {% include "components/sidebar.html" %}
+
+    <main class="content">
+
+        <!-- Top Bar -->
+
+        <div class="topbar">
+
+            <h3>Loan Eligibility Prediction</h3>
+
+            <div class="user">
+
+                <i class="bi bi-shield-check"></i>
+
+                Secure Prediction
+
+            </div>
+
+        </div>
+
+        <!-- Prediction Card -->
+
+        <div class="card p-4">
+
+            <h2 class="mb-3">
+
+                Apply for Loan
+
+            </h2>
+
+            <p class="text-muted mb-5">
+
+                Fill in the applicant details below. SmartLender AI will analyze
+                the information using Machine Learning and instantly predict
+                the loan eligibility.
+
+            </p>
+
+            <form action="/submit" method="POST" id="predictionForm">
+
+                <div class="row">
+
+                    <!-- Left -->
+
+                    <div class="col-lg-6">
+
+                        <h5 class="mb-3">
+
+                            Applicant Information
+
+                        </h5>
+
+                        <div class="mb-3">
+
+                            <label>Gender</label>
+
+                            <select class="form-select" name="Gender">
+
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Marital Status</label>
+
+                            <select class="form-select" name="Married">
+
+                                <option value="1">Married</option>
+                                <option value="0">Single</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Dependents</label>
+
+                            <select class="form-select" name="Dependents">
+
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3+</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Education</label>
+
+                            <select class="form-select" name="Education">
+
+                                <option value="1">Graduate</option>
+                                <option value="0">Not Graduate</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Self Employed</label>
+
+                            <select class="form-select" name="Self_Employed">
+
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Property Area</label>
+
+                            <select class="form-select" name="Property_Area">
+
+                                <option value="0">Rural</option>
+                                <option value="1">Semiurban</option>
+                                <option value="2">Urban</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Right -->
+
+                    <div class="col-lg-6">
+
+                        <h5 class="mb-3">
+
+                            Financial Information
+
+                        </h5>
+
+                        <div class="mb-3">
+
+                            <label>Applicant Income (₹)</label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                name="ApplicantIncome"
+                                placeholder="e.g. 5000"
+                                min="0"
+                                required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Co-applicant Income (₹)</label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                name="CoapplicantIncome"
+                                placeholder="e.g. 2000"
+                                min="0"
+                                required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Loan Amount (₹)</label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                name="LoanAmount"
+                                placeholder="e.g. 150"
+                                min="1"
+                                required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Loan Amount Term (Months)</label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                name="Loan_Amount_Term"
+                                placeholder="e.g. 360"
+                                min="1"
+                                required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label>Credit History</label>
+
+                            <select
+                                class="form-select"
+                                name="Credit_History">
+
+                                <option value="1">Good</option>
+                                <option value="0">Bad</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg px-5"
+                        id="predictBtn">
+
+                        <i class="bi bi-lightning-charge-fill"></i>
+
+                        Predict Loan
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+document.getElementById("predictionForm").addEventListener("submit",function(){
+
+let btn=document.getElementById("predictBtn");
+
+btn.disabled=true;
+
+btn.innerHTML='<span class="spinner-border spinner-border-sm"></span> Predicting...';
+
+});
+
+</script>
+
+{% endblock %}
