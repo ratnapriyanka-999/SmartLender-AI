@@ -1,221 +1,185 @@
-import pandas as pd
 import joblib
-
-from pandas.api.types import is_numeric_dtype
-
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+import pandas as pd
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
 
-from sklearn.metrics import accuracy_score, classification_report
-
-# ==========================================
-# Load Dataset
-# ==========================================
-
-print("Loading Dataset...")
-
-data = pd.read_csv("dataset/loan_prediction.csv")
-
-# ==========================================
-# Handle Missing Values
-# ==========================================
-
-for col in data.columns:
-    if is_numeric_dtype(data[col]):
-        data[col] = data[col].fillna(data[col].median())
-    else:
-        data[col] = data[col].fillna(data[col].mode()[0])
-
-# ==========================================
-# Remove Loan_ID
-# ==========================================
-
-if "Loan_ID" in data.columns:
-    data = data.drop("Loan_ID", axis=1)
-
-# ==========================================
-# Convert Categorical Columns
-# ==========================================
-
-data = pd.get_dummies(data, drop_first=True)
-
-data = data.astype(int)
-
-# ==========================================
-# Features and Target
-# ==========================================
-
-X = data.drop("Loan_Status_Y", axis=1)
-y = data["Loan_Status_Y"]
-
-# ==========================================
-# Feature Scaling
-# ==========================================
-
-scaler = StandardScaler()
-
-X_scaled = scaler.fit_transform(X)
-
-# ==========================================
-# Train Test Split
-# ==========================================
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled,
-    y,
-    test_size=0.2,
-    random_state=42,
-    stratify=y
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    classification_report
 )
+
+# ==========================================
+# Load Preprocessed Data
+# ==========================================
+
+print("=" * 60)
+print("Loading Preprocessed Dataset...")
+print("=" * 60)
+
+data = joblib.load("model/preprocessed_data.pkl")
+
+X_train = data["X_train"]
+X_test = data["X_test"]
+
+y_train = data["y_train"]
+y_test = data["y_test"]
+
+feature_names = data["feature_names"]
 
 print("\nTraining Samples :", len(X_train))
 print("Testing Samples  :", len(X_test))
 
 # ==========================================
-# Decision Tree
+# Models
 # ==========================================
 
-print("\n==============================")
-print("Decision Tree Model")
-print("==============================")
+models = {
 
-dt_model = DecisionTreeClassifier(random_state=42)
+    "Decision Tree":
+    DecisionTreeClassifier(
+        max_depth=6,
+        random_state=42
+    ),
 
-dt_model.fit(X_train, y_train)
+    "Random Forest":
+    RandomForestClassifier(
+        n_estimators=300,
+        max_depth=8,
+        min_samples_leaf=2,
+        random_state=42
+    ),
 
-dt_pred = dt_model.predict(X_test)
+    "KNN":
+    KNeighborsClassifier(
+        n_neighbors=5
+    ),
 
-dt_accuracy = accuracy_score(y_test, dt_pred)
+    "XGBoost":
+    XGBClassifier(
+        random_state=42,
+        eval_metric="logloss"
+    )
 
-print("Accuracy :", dt_accuracy)
+}
 
-print("\nClassification Report")
-print(classification_report(y_test, dt_pred))
+results = {}
 
-# ==========================================
-# Random Forest
-# ==========================================
-
-print("\n==============================")
-print("Random Forest Model")
-print("==============================")
-
-rf_model = RandomForestClassifier(
-    n_estimators=100,
-    random_state=42
-)
-
-rf_model.fit(X_train, y_train)
-
-rf_pred = rf_model.predict(X_test)
-
-rf_accuracy = accuracy_score(y_test, rf_pred)
-
-print("Accuracy :", rf_accuracy)
-
-print("\nClassification Report")
-print(classification_report(y_test, rf_pred))
+best_model = None
+best_accuracy = 0
+best_name = ""
 
 # ==========================================
-# KNN
+# Train Models
 # ==========================================
 
-print("\n==============================")
-print("KNN Model")
-print("==============================")
+for name, model in models.items():
 
-knn_model = KNeighborsClassifier(n_neighbors=5)
+    print("\n" + "=" * 60)
+    print(name)
+    print("=" * 60)
 
-knn_model.fit(X_train, y_train)
+    model.fit(X_train, y_train)
 
-knn_pred = knn_model.predict(X_test)
+    prediction = model.predict(X_test)
 
-knn_accuracy = accuracy_score(y_test, knn_pred)
+    accuracy = accuracy_score(y_test, prediction)
+    precision = precision_score(y_test, prediction)
+    recall = recall_score(y_test, prediction)
+    f1 = f1_score(y_test, prediction)
 
-print("Accuracy :", knn_accuracy)
+    print(f"Accuracy  : {accuracy:.4f}")
+    print(f"Precision : {precision:.4f}")
+    print(f"Recall    : {recall:.4f}")
+    print(f"F1 Score  : {f1:.4f}")
 
-print("\nClassification Report")
-print(classification_report(y_test, knn_pred))
+    print("\nClassification Report\n")
+    print(classification_report(y_test, prediction))
 
-# ==========================================
-# XGBoost
-# ==========================================
+    results[name] = accuracy
 
-print("\n==============================")
-print("XGBoost Model")
-print("==============================")
+    if accuracy > best_accuracy:
 
-xgb_model = XGBClassifier(
-    random_state=42,
-    eval_metric="logloss"
-)
-
-xgb_model.fit(X_train, y_train)
-
-xgb_pred = xgb_model.predict(X_test)
-
-xgb_accuracy = accuracy_score(y_test, xgb_pred)
-
-print("Accuracy :", xgb_accuracy)
-
-print("\nClassification Report")
-print(classification_report(y_test, xgb_pred))
+        best_accuracy = accuracy
+        best_model = model
+        best_name = name
 
 # ==========================================
 # Accuracy Comparison
 # ==========================================
 
-print("\n====================================")
-print("MODEL ACCURACY COMPARISON")
-print("====================================")
+print("\n")
+print("=" * 60)
+print("MODEL COMPARISON")
+print("=" * 60)
 
-print(f"Decision Tree : {dt_accuracy:.4f}")
-print(f"Random Forest : {rf_accuracy:.4f}")
-print(f"KNN           : {knn_accuracy:.4f}")
-print(f"XGBoost       : {xgb_accuracy:.4f}")
+for name, score in results.items():
 
-accuracies = {
-    "Decision Tree": dt_accuracy,
-    "Random Forest": rf_accuracy,
-    "KNN": knn_accuracy,
-    "XGBoost": xgb_accuracy
-}
+    print(f"{name:20} : {score:.4f}")
 
-best_model_name = max(accuracies, key=accuracies.get)
-
-print("\nBest Model :", best_model_name)
-
+print("\nBest Model :", best_name)
+print("Accuracy   :", best_accuracy)
 # ==========================================
-# Save Best Model
+# Feature Importance Analysis
 # ==========================================
 
-if best_model_name == "Decision Tree":
-    best_model = dt_model
+if best_name == "Random Forest":
 
-elif best_model_name == "Random Forest":
-    best_model = rf_model
+    import matplotlib.pyplot as plt
 
-elif best_model_name == "KNN":
-    best_model = knn_model
+    print("\n")
+    print("=" * 70)
+    print("RANDOM FOREST FEATURE IMPORTANCE")
+    print("=" * 70)
 
-else:
-    best_model = xgb_model
+    importance = pd.DataFrame({
+        "Feature": feature_names,
+        "Importance": best_model.feature_importances_
+    })
 
-joblib.dump(best_model, "model/loan_model.pkl")
+    importance = importance.sort_values(
+        by="Importance",
+        ascending=False
+    )
 
-print("Best model saved as model/loan_model.pkl")
+    print(importance)
 
-# Save Scaler
+    print("\nTop 10 Most Important Features")
+    print(importance.head(10))
 
-joblib.dump(scaler, "model/scaler.pkl")
+    plt.figure(figsize=(10,6))
 
-print("Scaler saved as model/scaler.pkl")
+    plt.barh(
+        importance["Feature"],
+        importance["Importance"]
+    )
 
-print("\n====================================")
-print("MODEL BUILDING COMPLETED SUCCESSFULLY")
-print("====================================")
+    plt.gca().invert_yaxis()
+
+    plt.title("Random Forest Feature Importance")
+
+    plt.xlabel("Importance")
+
+    plt.tight_layout()
+
+    plt.show()
+# ==========================================
+# Save Model
+# ==========================================
+
+joblib.dump(
+    best_model,
+    "model/loan_model.pkl"
+)
+
+print("\nBest model saved successfully.")
+
+print("\n")
+print("=" * 60)
+print("MODEL TRAINING COMPLETED")
+print("=" * 60)

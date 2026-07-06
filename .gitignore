@@ -1,5 +1,25 @@
+# Python
 __pycache__/
-*.pyc
-users.db
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+venv/
 .env
+
+# VS Code
 .vscode/
+
+# Flask
+instance/
+*.db-journal
+
+# Python cache
+.pytest_cache/
+
+# OS Files
+.DS_Store
+Thumbs.db
+users.db
+# Model cache
+*.log

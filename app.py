@@ -6,46 +6,33 @@ import joblib
 app = Flask(__name__)
 app.secret_key = "smartlender_secret_key"
 
-# ==========================================
-# Load ML Model
-# ==========================================
+# ==========================
+# Load Model
+# ==========================
 
 model = joblib.load("model/loan_model.pkl")
 scaler = joblib.load("model/scaler.pkl")
-
-
-# ==========================================
-# Database Connection
-# ==========================================
-
 def get_connection():
     conn = sqlite3.connect("users.db")
     conn.row_factory = sqlite3.Row
     return conn
 
-
-# ==========================================
+# ==========================
 # Login
-# ==========================================
-
+# ==========================
 @app.route("/", methods=["GET", "POST"])
 def login():
 
-    if "user" in session:
-        return redirect(url_for("dashboard"))
-
     if request.method == "POST":
 
-        username = request.form["username"].strip()
+        username = request.form["username"]
         password = request.form["password"]
 
         conn = get_connection()
-
         user = conn.execute(
             "SELECT * FROM users WHERE username=?",
             (username,)
         ).fetchone()
-
         conn.close()
 
         if user and check_password_hash(user["password"], password):
@@ -60,32 +47,15 @@ def login():
         )
 
     return render_template("login.html")
-
-
-# ==========================================
-# Register
-# ==========================================
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
 
     if request.method == "POST":
 
-        fullname = request.form["fullname"].strip()
-        email = request.form["email"].strip()
-        username = request.form["username"].strip()
-
-        password = request.form["password"]
-        confirm_password = request.form["confirm_password"]
-
-        if password != confirm_password:
-
-            return render_template(
-                "register.html",
-                error="Passwords do not match."
-            )
-
-        hashed_password = generate_password_hash(password)
+        fullname = request.form["fullname"]
+        email = request.form["email"]
+        username = request.form["username"]
+        password = generate_password_hash(request.form["password"])
 
         conn = get_connection()
 
@@ -101,7 +71,7 @@ def register():
                     fullname,
                     email,
                     username,
-                    hashed_password
+                    password
                 )
             )
 
@@ -111,7 +81,7 @@ def register():
 
             return redirect(url_for("login"))
 
-        except sqlite3.IntegrityError:
+        except:
 
             conn.close()
 
@@ -121,11 +91,9 @@ def register():
             )
 
     return render_template("register.html")
-
-
-# ==========================================
+# ==========================
 # Dashboard
-# ==========================================
+# ==========================
 
 @app.route("/dashboard")
 def dashboard():
@@ -133,15 +101,12 @@ def dashboard():
     if "user" not in session:
         return redirect(url_for("login"))
 
-    return render_template(
-        "dashboard.html",
-        username=session["user"]
-    )
+    return render_template("dashboard.html")
 
 
-# ==========================================
+# ==========================
 # Analytics
-# ==========================================
+# ==========================
 
 @app.route("/analytics")
 def analytics():
@@ -152,9 +117,9 @@ def analytics():
     return render_template("analytics.html")
 
 
-# ==========================================
+# ==========================
 # AI Model
-# ==========================================
+# ==========================
 
 @app.route("/model")
 def model_info():
@@ -162,12 +127,18 @@ def model_info():
     if "user" not in session:
         return redirect(url_for("login"))
 
-    return render_template("model.html")
+    return render_template(
+        "model.html",
+        accuracy="82.93%",
+        model_name="XGBoost",
+        algorithms=4,
+        records=614
+    )
 
 
-# ==========================================
+# ==========================
 # Prediction Page
-# ==========================================
+# ==========================
 
 @app.route("/predict")
 def predict():
@@ -176,10 +147,8 @@ def predict():
         return redirect(url_for("login"))
 
     return render_template("predict.html")
-
-
-# ==========================================
-# Prediction
+ # ==========================================
+# Prediction Logic
 # ==========================================
 
 @app.route("/submit", methods=["POST"])
@@ -187,6 +156,10 @@ def submit():
 
     if "user" not in session:
         return redirect(url_for("login"))
+
+    # ==========================
+    # Read Form Data
+    # ==========================
 
     gender = request.form["Gender"]
     married = request.form["Married"]
@@ -196,11 +169,31 @@ def submit():
 
     applicant_income = float(request.form["ApplicantIncome"])
     coapplicant_income = float(request.form["CoapplicantIncome"])
+
+    # User enters loan amount in Rupees
     loan_amount = float(request.form["LoanAmount"])
+
+    # Convert Rupees to Thousands (dataset format)
+    loan_amount = loan_amount / 1000
+
     loan_term = float(request.form["Loan_Amount_Term"])
     credit_history = float(request.form["Credit_History"])
 
     property_area = request.form["Property_Area"]
+
+    # ==========================
+    # Feature Engineering
+    # ==========================
+
+    total_income = applicant_income + coapplicant_income
+
+    loan_income_ratio = loan_amount / max(total_income, 1)
+
+    monthly_loan_burden = loan_amount / max(loan_term, 1)
+
+    # ==========================
+    # One-Hot Encoding
+    # ==========================
 
     Gender_Male = 1 if gender == "1" else 0
     Married_Yes = 1 if married == "1" else 0
@@ -216,12 +209,19 @@ def submit():
     Property_Area_Semiurban = 1 if property_area == "1" else 0
     Property_Area_Urban = 1 if property_area == "2" else 0
 
+    # ==========================
+    # Feature Vector
+    # ==========================
+
     features = [[
         applicant_income,
         coapplicant_income,
         loan_amount,
         loan_term,
         credit_history,
+        total_income,
+        loan_income_ratio,
+        monthly_loan_burden,
         Gender_Male,
         Married_Yes,
         Dependents_1,
@@ -233,9 +233,17 @@ def submit():
         Property_Area_Urban
     ]]
 
-    features = scaler.transform(features)
+    # ==========================
+    # Scale Features
+    # ==========================
 
-    prediction = model.predict(features)
+    scaled_features = scaler.transform(features)
+
+    # ==========================
+    # Prediction
+    # ==========================
+
+    prediction = model.predict(scaled_features)
 
     if prediction[0] == 1:
         result = "approved"
@@ -248,10 +256,9 @@ def submit():
     )
 
 
-# ==========================================
+# ==========================
 # Logout
-# ==========================================
-
+# ==========================
 @app.route("/logout")
 def logout():
 
@@ -259,10 +266,9 @@ def logout():
 
     return redirect(url_for("login"))
 
-
-# ==========================================
-# Run Flask
-# ==========================================
+# ==========================
+# Run App
+# ==========================
 
 if __name__ == "__main__":
     app.run(debug=True)

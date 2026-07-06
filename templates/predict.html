@@ -158,13 +158,13 @@
 
                         <div class="mb-3">
 
-                            <label>Applicant Income (₹)</label>
+                            <label>Monthly Applicant Income (₹)</label>
 
                             <input
                                 type="number"
                                 class="form-control"
                                 name="ApplicantIncome"
-                                placeholder="e.g. 5000"
+                                placeholder="e.g. 50000"
                                 min="0"
                                 required>
 
@@ -172,13 +172,13 @@
 
                         <div class="mb-3">
 
-                            <label>Co-applicant Income (₹)</label>
+                            <label>Monthly Co-applicant Income (₹)</label>
 
                             <input
                                 type="number"
                                 class="form-control"
                                 name="CoapplicantIncome"
-                                placeholder="e.g. 2000"
+                                placeholder="e.g. 20000"
                                 min="0"
                                 required>
 
@@ -192,23 +192,32 @@
                                 type="number"
                                 class="form-control"
                                 name="LoanAmount"
-                                placeholder="e.g. 150"
-                                min="1"
+                                placeholder="e.g. 500000"
+                                min="1000"
                                 required>
 
                         </div>
 
                         <div class="mb-3">
 
-                            <label>Loan Amount Term (Months)</label>
+                            <label>Loan Duration</label>
 
-                            <input
-                                type="number"
-                                class="form-control"
+                            <select
+                                class="form-select"
                                 name="Loan_Amount_Term"
-                                placeholder="e.g. 360"
-                                min="1"
                                 required>
+
+                                <option value="12">12 Months</option>
+                                <option value="24">24 Months</option>
+                                <option value="36">36 Months</option>
+                                <option value="60">60 Months</option>
+                                <option value="120">120 Months</option>
+                                <option value="180">180 Months</option>
+                                <option value="240">240 Months</option>
+                                <option value="300">300 Months</option>
+                                <option value="360" selected>360 Months</option>
+
+                            </select>
 
                         </div>
 
@@ -220,8 +229,8 @@
                                 class="form-select"
                                 name="Credit_History">
 
-                                <option value="1">Good</option>
-                                <option value="0">Bad</option>
+                                <option value="1">Good (No Default History)</option>
+                                <option value="0">Poor / Bad</option>
 
                             </select>
 

@@ -14,52 +14,47 @@
 
     <main class="content">
 
-        <!-- Top Navigation -->
+        <!-- Top Bar -->
 
         <div class="topbar">
 
             <h3>Machine Learning Model</h3>
 
             <div class="user">
-
                 <i class="bi bi-cpu-fill"></i>
-
                 AI Engine
-
             </div>
 
         </div>
 
         <!-- Hero Section -->
 
-        <section class="welcome">
+        <div class="welcome">
 
             <div>
 
-                <h1>Artificial Intelligence Prediction Engine</h1>
+                <h1>Artificial Intelligence Engine</h1>
 
                 <p>
-
                     SmartLender AI evaluates applicant financial,
                     demographic and credit information using supervised
                     Machine Learning algorithms to predict loan eligibility
                     quickly, consistently and accurately.
-
                 </p>
 
             </div>
 
-            <img src="{{ url_for('static', filename='images/hero.svg') }}" alt="AI Model">
+            <img src="{{ url_for('static', filename='images/hero.svg') }}">
 
-        </section>
+        </div>
 
         <!-- Statistics -->
 
-        <section class="stats">
+        <div class="stats">
 
             <div class="card">
 
-                <h2>77.24%</h2>
+                <h2>{{ accuracy }}</h2>
 
                 <p>Best Accuracy</p>
 
@@ -67,7 +62,7 @@
 
             <div class="card">
 
-                <h2>4</h2>
+                <h2>{{ algorithms }}</h2>
 
                 <p>Algorithms Trained</p>
 
@@ -75,7 +70,7 @@
 
             <div class="card">
 
-                <h2>614</h2>
+                <h2>{{ records }}</h2>
 
                 <p>Training Records</p>
 
@@ -83,25 +78,23 @@
 
             <div class="card">
 
-                <h2>Random Forest</h2>
+                <h2>{{ model_name }}</h2>
 
                 <p>Selected Model</p>
 
             </div>
 
-        </section>
+        </div>
 
-        <br>
+        <br><br>
 
-        <!-- Algorithm Comparison -->
+        <!-- Algorithms Table -->
 
-        <div class="card p-4">
+        <div class="card">
 
-            <h3 class="mb-4">
-
+            <h2 style="margin-bottom:30px;">
                 Machine Learning Algorithms
-
-            </h3>
+            </h2>
 
             <table class="table table-hover align-middle">
 
@@ -135,9 +128,9 @@
 
                         <td>Random Forest</td>
 
-                        <td>⭐ Selected</td>
+                        <td>✔ Trained</td>
 
-                        <td>Final Prediction Model</td>
+                        <td>Ensemble Learning Model</td>
 
                     </tr>
 
@@ -147,7 +140,7 @@
 
                         <td>✔ Trained</td>
 
-                        <td>Performance Comparison</td>
+                        <td>Distance-Based Classification</td>
 
                     </tr>
 
@@ -155,7 +148,14 @@
 
                         <td>XGBoost</td>
 
-                        <td>✔ Trained</td>
+                        <td>
+                            ⭐selected
+                            {% if model_name == "XGBoost" %}
+                                Selected
+                            {% else %}
+                                Trained
+                            {% endif %}
+                        </td>
 
                         <td>Gradient Boosting Evaluation</td>
 
@@ -164,34 +164,6 @@
                 </tbody>
 
             </table>
-
-        </div>
-
-        <br>
-
-        <!-- Model Workflow -->
-
-        <div class="card p-4">
-
-            <h3 class="mb-3">
-
-                Prediction Workflow
-
-            </h3>
-
-            <ol>
-
-                <li>Applicant enters loan application details.</li>
-
-                <li>Input data is preprocessed and scaled.</li>
-
-                <li>Random Forest model evaluates eligibility.</li>
-
-                <li>Prediction result is generated instantly.</li>
-
-                <li>User receives Loan Approved or Loan Rejected decision.</li>
-
-            </ol>
 
         </div>
 

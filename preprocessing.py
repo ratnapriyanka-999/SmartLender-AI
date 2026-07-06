@@ -1,137 +1,171 @@
-from imblearn.over_sampling import SMOTE
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import joblib
 
+from imblearn.over_sampling import SMOTE
 from pandas.api.types import is_numeric_dtype
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 # ==========================================
 # Load Dataset
 # ==========================================
 
-print("Loading Dataset...")
+print("=" * 60)
+print("Loading Loan Prediction Dataset...")
+print("=" * 60)
 
 data = pd.read_csv("dataset/loan_prediction.csv")
 
+print("\nDataset Shape :", data.shape)
+data["TotalIncome"] = (
+    data["ApplicantIncome"] +
+    data["CoapplicantIncome"]
+)
+
 # ==========================================
-# Missing Values Before Handling
+# Missing Values
 # ==========================================
 
-print("\n========== Missing Values Before Handling ==========")
+print("\nMissing Values Before Handling")
 print(data.isnull().sum())
 
-# ==========================================
-# Handle Missing Values
-# ==========================================
+for column in data.columns:
 
-for col in data.columns:
-    if is_numeric_dtype(data[col]):
-        data[col] = data[col].fillna(data[col].median())
+    if is_numeric_dtype(data[column]):
+        data[column] = data[column].fillna(data[column].median())
+
     else:
-        data[col] = data[col].fillna(data[col].mode()[0])
+        data[column] = data[column].fillna(data[column].mode()[0])
 
-# ==========================================
-# Missing Values After Handling
-# ==========================================
-
-print("\n========== Missing Values After Handling ==========")
+print("\nMissing Values After Handling")
 print(data.isnull().sum())
 
 # ==========================================
 # Loan Status Distribution
 # ==========================================
 
-print("\n========== Loan Status Distribution ==========")
+print("\nLoan Status Distribution")
 print(data["Loan_Status"].value_counts())
 
 plt.figure(figsize=(6,4))
 sns.countplot(x="Loan_Status", data=data)
 plt.title("Loan Status Distribution")
-plt.xlabel("Loan Status")
-plt.ylabel("Count")
+plt.tight_layout()
 plt.show()
-
 # ==========================================
 # Remove Loan_ID
 # ==========================================
 
 if "Loan_ID" in data.columns:
-    data = data.drop("Loan_ID", axis=1)
+    data.drop("Loan_ID", axis=1, inplace=True)
 
 # ==========================================
-# Convert Categorical Columns to Numeric
+# Feature Engineering
+# ==========================================
+
+# Total Monthly Income
+data["TotalIncome"] = (
+    data["ApplicantIncome"] +
+    data["CoapplicantIncome"]
+)
+
+# Loan to Income Ratio
+data["LoanIncomeRatio"] = (
+    data["LoanAmount"] /
+    data["TotalIncome"].replace(0, 1)
+)
+
+# Estimated Monthly EMI
+data["MonthlyLoanBurden"] = (
+    data["LoanAmount"] /
+    data["Loan_Amount_Term"].replace(0, 1)
+)
+# ==========================================
+# One-Hot Encoding
 # ==========================================
 
 data = pd.get_dummies(data, drop_first=True)
 
-# Convert boolean columns into integers
-data = data.astype(int)
-
-print("\n========== Data Types ==========")
-print(data.dtypes)
+print("\nEncoded Dataset Shape :", data.shape)
 
 # ==========================================
-# Features and Target
+# Features & Target
 # ==========================================
 
-target_column = "Loan_Status_Y"
+X = data.drop("Loan_Status_Y", axis=1)
+y = data["Loan_Status_Y"]
 
-X = data.drop(columns=[target_column])
-y = data[target_column]
-
-# ==========================================
-# Feature Scaling
-# ==========================================
-
-scaler = StandardScaler()
-
-X_scaled = scaler.fit_transform(X)
-
-print("\n========== Scaling Completed Successfully ==========")
-print(X_scaled[:5])
+print("\nFeatures")
+print(list(X.columns))
 
 # ==========================================
 # Train Test Split
 # ==========================================
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled,
+    X,
     y,
-    test_size=0.2,
+    test_size=0.20,
     random_state=42,
     stratify=y
 )
 
-print("\n========== Dataset Split ==========")
-print("Training Data Shape :", X_train.shape)
-print("Testing Data Shape  :", X_test.shape)
+print("\nTraining Samples :", len(X_train))
+print("Testing Samples  :", len(X_test))
 
 # ==========================================
-# Dataset Balancing using SMOTE
+# Scaling
 # ==========================================
 
-print("\n========== Before SMOTE ==========")
-print(pd.Series(y_train).value_counts())
+scaler = StandardScaler()
+
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+joblib.dump(scaler, "model/scaler.pkl")
+
+print("\nScaler saved successfully.")
+
+# ==========================================
+# SMOTE
+# ==========================================
 
 smote = SMOTE(random_state=42)
 
 X_train_balanced, y_train_balanced = smote.fit_resample(
-    X_train,
+    X_train_scaled,
     y_train
 )
 
-print("\n========== After SMOTE ==========")
+print("\nBefore SMOTE")
+print(y_train.value_counts())
+
+print("\nAfter SMOTE")
 print(pd.Series(y_train_balanced).value_counts())
 
 plt.figure(figsize=(6,4))
 sns.countplot(x=y_train_balanced)
-plt.title("Balanced Loan Status Distribution (SMOTE)")
-plt.xlabel("Loan Status")
-plt.ylabel("Count")
+plt.title("Balanced Training Data")
+plt.tight_layout()
 plt.show()
 
-print("\n======================================")
-print("Preprocessing Completed Successfully!")
-print("======================================")
+print("\nPreprocessing Completed Successfully!")
+
+# ==========================================
+# Save Processed Data
+# ==========================================
+
+joblib.dump(
+    {
+        "X_train": X_train_balanced,
+        "X_test": X_test_scaled,
+        "y_train": y_train_balanced,
+        "y_test": y_test,
+        "feature_names": X.columns.tolist()
+    },
+    "model/preprocessed_data.pkl"
+)
+
+print("Processed dataset saved as model/preprocessed_data.pkl")
